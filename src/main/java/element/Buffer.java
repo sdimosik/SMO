@@ -26,9 +26,9 @@ public class Buffer {
     }
 
     // return task failure
-    public Task offer(Task task) {
+    public Task offer(Task task, int time) {
         if (isFull()) {
-            return deleteOldAndPutNew(task);
+            return deleteOldAndPutNew(task, time);
         }
 
         writeIdx++;
@@ -61,7 +61,7 @@ public class Buffer {
         }
     }
 
-    private Task deleteOldAndPutNew(Task task) {
+    private Task deleteOldAndPutNew(Task task, int time) {
 
         int oldIdx;
         try {
@@ -73,6 +73,7 @@ public class Buffer {
         }
 
         Task failureTask = data[oldIdx];
+        failureTask.setEnd(time);
         data[oldIdx] = task;
         queue.offer(oldIdx);
         return failureTask;

@@ -7,6 +7,7 @@ import java.util.List;
 public class Appliances {
 
     private final Task[] appliance;
+    private final int[] time;
     private final int capacity;
     private int size;
 
@@ -20,6 +21,8 @@ public class Appliances {
         this.readIdx = 0;
         this.writeIdx = -1;
         this.size = 0;
+        time = new int[capacity];
+        Arrays.fill(time, 0);
     }
 
     // return task failure
@@ -80,16 +83,18 @@ public class Appliances {
     public void updateTimeInfo() {
         for (int i = 0; i < capacity; i++) {
             if (appliance[i] != null) {
+                time[i]++;
                 appliance[i].executeTask(1);
             }
         }
     }
 
-    public List<Task> getCompleteTasksAndCleanUp() {
+    public List<Task> getCompleteTasksAndCleanUp(int time) {
         List<Task> list = new LinkedList<>();
         for (int i = 0; i < capacity; i++) {
             if (appliance[i] != null && appliance[i].isDone()) {
                 list.add(appliance[i]);
+                appliance[i].setEnd(time);
                 remove(i);
             }
         }
@@ -108,5 +113,14 @@ public class Appliances {
         return "Appliances{" +
             "appliance=" + Arrays.toString(appliance) +
             '}';
+    }
+
+    public List<Double> kUsedAppliance(int time) {
+        List<Double> list = new LinkedList<>();
+        for (int i = 0; i < capacity; i++) {
+            int local = this.time[i];
+            list.add((double) (local) / (double) (time));
+        }
+        return list;
     }
 }
