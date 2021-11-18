@@ -1,4 +1,4 @@
-package element;
+package com.sdimosik.smo.element;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ public class Buffer {
     }
 
     // return task failure
-    public Task offer(Task task, int time) {
+    public Task offer(Task task, double time) {
         if (isFull()) {
             return deleteOldAndPutNew(task, time);
         }
@@ -61,7 +61,7 @@ public class Buffer {
         }
     }
 
-    private Task deleteOldAndPutNew(Task task, int time) {
+    private Task deleteOldAndPutNew(Task task, double time) {
 
         int oldIdx;
         try {
@@ -112,5 +112,9 @@ public class Buffer {
         return "Buffer{" +
             "data=" + Arrays.toString(data) +
             '}';
+    }
+
+    public int size(){
+        return size;
     }
 }

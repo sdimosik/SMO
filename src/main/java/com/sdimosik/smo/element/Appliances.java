@@ -1,4 +1,4 @@
-package element;
+package com.sdimosik.smo.element;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -25,7 +25,6 @@ public class Appliances {
         Arrays.fill(time, 0);
     }
 
-    // return task failure
     public boolean offer(Task task) {
         if (isFull()) {
             return false;
@@ -80,7 +79,44 @@ public class Appliances {
         return size != capacity;
     }
 
-    public void updateTimeInfo() {
+    public double getCompletionsTimeOfTask(double currentTime, EndlessSource input) {
+        Task task = getTaskWhichFirstDone(currentTime, false, input.taskQueue.isEmpty());
+        if (task == null) return currentTime;
+
+        if (input.taskQueue.isEmpty()) {
+            return task.getTimeToComplete();
+        }
+
+        if (task.getTimeToComplete() < input.taskQueue.peek().start) {
+            return task.getTimeToComplete();
+        }
+
+        return currentTime;
+    }
+
+    public Task getCompleteTask(double currentTime, EndlessSource input) {
+        return getTaskWhichFirstDone(currentTime, true, input.taskQueue.isEmpty());
+    }
+
+    private Task getTaskWhichFirstDone(double currentTime, boolean removeFlag, boolean isEmptyQueueTask) {
+        Task task = null;
+        double minTime = Double.MAX_VALUE;
+        int pos = 0;
+        for (int i = 0; i < capacity; i++) {
+            if (appliance[i] != null
+                && (appliance[i].isDone(currentTime) || (isEmptyQueueTask))
+                && appliance[i].getTimeToComplete() < minTime
+            ) {
+                task = appliance[i];
+                minTime = appliance[i].getTimeToComplete();
+                pos = i;
+            }
+        }
+        if (removeFlag) remove(pos);
+        return task;
+    }
+
+/*    public void updateTimeInfo() {
         for (int i = 0; i < capacity; i++) {
             if (appliance[i] != null) {
                 time[i]++;
@@ -99,7 +135,7 @@ public class Appliances {
             }
         }
         return list;
-    }
+    }*/
 
     private void remove(int idx) {
         if (idx >= 0 && idx < capacity && appliance[idx] != null) {
@@ -122,5 +158,9 @@ public class Appliances {
             list.add((double) (local) / (double) (time));
         }
         return list;
+    }
+
+    public int size() {
+        return size;
     }
 }

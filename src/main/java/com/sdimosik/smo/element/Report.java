@@ -1,4 +1,4 @@
-package element;
+package com.sdimosik.smo.element;
 
 import java.util.List;
 
