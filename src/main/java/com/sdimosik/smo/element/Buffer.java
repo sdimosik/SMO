@@ -73,7 +73,7 @@ public class Buffer {
         }
 
         Task failureTask = data[oldIdx];
-        failureTask.setEnd(time);
+        failureTask.setEndTime(time);
         data[oldIdx] = task;
         queue.offer(oldIdx);
         return failureTask;

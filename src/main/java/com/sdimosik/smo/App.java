@@ -4,11 +4,12 @@ import com.sdimosik.smo.element.Appliances;
 import com.sdimosik.smo.element.Buffer;
 import com.sdimosik.smo.element.EndlessSource;
 import com.sdimosik.smo.element.InfoForUI;
+import com.sdimosik.smo.element.Report;
 import com.sdimosik.smo.element.Task;
 
 import java.util.Scanner;
 
-import static com.sdimosik.smo.Utils.*;
+import static com.sdimosik.smo.Utils.State;
 
 public class App {
 
@@ -20,7 +21,7 @@ public class App {
     private static final int INPUT_COUNT = 3;
     private static final int BUFFER_CAPACITY = 3;
     private static final int APPLIANCES_CAPACITY = 4;
-    private static final long BARRIER_TASK_COUNT = 100;
+    private static final long BARRIER_TASK_COUNT = 10;
     private static final Scanner IN = new Scanner(System.in);
 
     private static EndlessSource input;
@@ -58,65 +59,82 @@ public class App {
 
         int iter = 0;
         while (isTasksExist()) {
-            System.out.println("\n-----------" + iter + "-----------");
             Task newTask = input.takeAndRegenerateTask(BARRIER_TASK_COUNT);
-            System.out.print(String.format("%,.3f  ", currentTime)
-                + String.format("%d  ", input.taskQueue.size())
-                + String.format("%d  ", buffer.size())
-                + String.format("%d  ", appliances.size())
-                + "Взяли задачу: ");
 
-            if (newTask != null) {
-                System.out.println(newTask.name + "  " + newTask.start);
-                updateData(newTask, State.START);
-                currentTime = newTask.start;
-
-                updateData(newTask, State.BUFFER);
-                Task failTask = buffer.offer(newTask, currentTime);
-                System.out.println(String.format("%,.3f  ", currentTime)
+            if (canShowStep()) {
+                System.out.println("\n-----------" + iter + "-----------");
+                System.out.print(String.format("%,.3f  ", currentTime)
                     + String.format("%d  ", input.taskQueue.size())
                     + String.format("%d  ", buffer.size())
                     + String.format("%d  ", appliances.size())
-                    + "Добавляем В БУФЕР задачу: " + newTask.name);
-                if (failTask != null) {
+                    + "Взяли задачу: ");
+            }
+
+            if (newTask != null) {
+                if (canShowStep()) System.out.println(newTask.name + "  " + newTask.START_TIME);
+                updateData(newTask, State.START, currentTime);
+                currentTime = newTask.START_TIME;
+
+                updateData(newTask, State.BUFFER, currentTime);
+                Task failTask = buffer.offer(newTask, currentTime);
+
+                if (canShowStep()) {
                     System.out.println(String.format("%,.3f  ", currentTime)
                         + String.format("%d  ", input.taskQueue.size())
                         + String.format("%d  ", buffer.size())
                         + String.format("%d  ", appliances.size())
-                        + "Сработала дисциплина отказа, задача: " + failTask.name);
-                    updateData(failTask, State.FAIL);
+                        + "Добавляем В БУФЕР задачу: " + newTask.name);
+                }
+                if (failTask != null) {
+                    if (canShowStep()) {
+                        System.out.println(String.format("%,.3f  ", currentTime)
+                            + String.format("%d  ", input.taskQueue.size())
+                            + String.format("%d  ", buffer.size())
+                            + String.format("%d  ", appliances.size())
+                            + "Сработала дисциплина отказа, задача: " + failTask.name);
+                    }
+                    updateData(failTask, State.FAIL, currentTime);
+
+                    input.generators.get(failTask.numSource).addCountFailedTask(1);
                 }
             } else {
-                System.out.println("не существует");
+                if (canShowStep()) {
+                    System.out.println("не существует");
+                }
             }
-
 
             if (appliances.isNotFull() && buffer.isNotEmpty()) {
                 Task afterBufferTask = buffer.poll();
-                updateData(afterBufferTask, State.APPLIANCE);
+                updateData(afterBufferTask, State.APPLIANCE, currentTime);
                 appliances.offer(afterBufferTask);
-                System.out.println(String.format("%,.3f  ", currentTime)
-                    + String.format("%d  ", input.taskQueue.size())
-                    + String.format("%d  ", buffer.size())
-                    + String.format("%d  ", appliances.size())
-                    + "Берём ИЗ БУФЕРА и добавляем В ПРИБОРЫ задачу: " + afterBufferTask.name);
+                if (canShowStep()) {
+                    System.out.println(String.format("%,.3f  ", currentTime)
+                        + String.format("%d  ", input.taskQueue.size())
+                        + String.format("%d  ", buffer.size())
+                        + String.format("%d  ", appliances.size())
+                        + "Берём ИЗ БУФЕРА и добавляем В ПРИБОРЫ задачу: " + afterBufferTask.name);
+                }
+                input.generators
+                    .get(afterBufferTask.numSource)
+                    .addBufferTime(afterBufferTask.getStartExecute() - afterBufferTask.START_TIME);
             }
 
             double completionTime = appliances.getCompletionsTimeOfTask(currentTime, input);
 
             if (currentTime != completionTime) {
-                // prev more than current because
-                // current is completion time of task
-                // prev is olderCurrent
-
                 Task completedTask = appliances.getCompleteTask(currentTime, input);
                 currentTime = completionTime;
-                updateData(completedTask, State.DONE);
-                System.out.println(String.format("%,.3f  ", completionTime)
-                    + String.format("%d  ", input.taskQueue.size())
-                    + String.format("%d  ", buffer.size())
-                    + String.format("%d  ", appliances.size())
-                    + "Удаление ИЗ ПРИБОРА выполненной задачи: " + completedTask.name);
+                updateData(completedTask, State.DONE, completionTime);
+                if (canShowStep()) {
+                    System.out.println(String.format("%,.3f  ", completionTime)
+                        + String.format("%d  ", input.taskQueue.size())
+                        + String.format("%d  ", buffer.size())
+                        + String.format("%d  ", appliances.size())
+                        + "Удаление ИЗ ПРИБОРА выполненной задачи: " + completedTask.name);
+                }
+                input.generators
+                    .get(completedTask.numSource)
+                    .addAppliance(completedTask.getEndTime() - completedTask.getStartExecute());
             }
 
             iter++;
@@ -124,42 +142,24 @@ public class App {
 
         System.out.println("\n\nFinish");
 
-        /*while (isTasksExist()) {
-            // Stage 0 - Дискретизация времени поминутно
-            currentTime++;
-            if (canShowStep()) System.out.println("--------------- " + currentTime);
-
-            // Step 1 - генерация тасков
-            List<Task> newTasks = new LinkedList<>();
-            if (allowedGenerate()) {
-                newTasks = input.updateWaitTime(currentTime);
-                if (canShowStep()) {
-                    System.out.printf("newTasks\n%s", newTasks);
-                }
-            }
-
-            // Step 2 - дисциплина буферизации и отказа
-            bufferingAndFailingDiscipline(newTasks, buffer);
-
-            // Step 3 - дисциплина постановки на обслуживание и вывод завершённых задач
-            servicingDiscipline(buffer, appliances);
-        }
-
         if (canShowReport()) {
             Report report = new Report(
                 input.countGeneratedTask4Source(),
                 input.probabilityOfFailure4Source(),
-                input.avgTimeOfExistTask4Source(),
+                input.avgBufferTime(),
+                input.avgApplianceTime(),
                 appliances.kUsedAppliance(currentTime)
             );
-            System.out.printf("\n%s", report);
-        }*/
+            report.print();
+        }
     }
 
-    private static void updateData(Task newTask, State start) {
-        newTask.updateState(start, currentTime);
+    private static void updateData(Task newTask, State stage, double time) {
+        newTask.updateState(stage, time);
         infoForUI.add(newTask);
-        //IN.nextLine();
+        if (canShowStep() && MODE == 0) {
+            IN.nextLine();
+        }
     }
 
 /*    private static void bufferingAndFailingDiscipline(List<Task> newTasks, Buffer buffer) {

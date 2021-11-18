@@ -1,13 +1,14 @@
 package com.sdimosik.smo.element;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
 public class EndlessSource {
-    private final List<Generator> generators;
+    public final List<Generator> generators;
     public final Queue<Task> taskQueue;
     private long countGeneratedTasks;
 
@@ -16,11 +17,10 @@ public class EndlessSource {
         private final double avg;
         private final double dev;
 
-        private int waitTime = 0;
         private int countGenerateTask = 0;
         private int countFailedTask = 0;
-        private int sumExecuteTimeTask = 0;
-        private int sumWaitTimeGenerate = 0;
+        private double bufferTime = 0;
+        private double applianceTime = 0;
 
         public final int numSource;
 
@@ -33,6 +33,7 @@ public class EndlessSource {
 
         public Task createTask(double currentTime) {
             double nextTime = currentTime + nextTime();
+            countGenerateTask++;
             return new Task(numSource, nextTime, 100);
         }
 
@@ -40,44 +41,17 @@ public class EndlessSource {
             return random.nextGaussian() * dev + avg;
         }
 
-        /*        public int getCountGenerateTask() {
-            return countGenerateTask;
-        }
-
-        public Task updateWaitTime() {
-            if (isReady()) {
-                waitTime = nextTime();
-                sumWaitTimeGenerate += waitTime;
-                countGenerateTask++;
-                return new Task(numSource);
-            }
-            waitTime--;
-            return null;
-        }
-
-        public int getCountFailedTask() {
-            return countFailedTask;
-        }
-
         public void addCountFailedTask(int count) {
             countFailedTask += count;
         }
 
-        public void addSumExecuteTimeTask(int time) {
-            sumExecuteTimeTask += time;
+        public void addBufferTime(double time) {
+            bufferTime += time;
         }
 
-        public int getSumExecuteTimeTask() {
-            return sumExecuteTimeTask;
+        public void addAppliance(double time) {
+            applianceTime += time;
         }
-
-        public int getSumWaitTimeGenerate() {
-            return sumWaitTimeGenerate;
-        }
-
-        private boolean isReady() {
-            return waitTime <= 0;
-        }*/
     }
 
     public EndlessSource(int capacity, double dev, double avg, int startTime) {
@@ -95,22 +69,10 @@ public class EndlessSource {
         }
     }
 
-    /*    public List<Task> updateWaitTime(int start) {
-        List<Task> list = new LinkedList<>();
-        for (Generator generator : generators) {
-            Task task = generator.updateWaitTime();
-            if (task != null) {
-                task.setStart(start);
-                list.add(task);
-            }
-        }
-        return list;
-    }
-
     public List<Integer> countGeneratedTask4Source() {
         List<Integer> list = new LinkedList<>();
         for (Generator generator : generators) {
-            list.add(generator.getCountGenerateTask());
+            list.add(generator.countGenerateTask);
         }
         return list;
     }
@@ -118,7 +80,7 @@ public class EndlessSource {
     public Integer countTasks() {
         int sum = 0;
         for (Generator generator : generators) {
-            sum += generator.getCountGenerateTask();
+            sum += generator.countGenerateTask;
         }
         return sum;
     }
@@ -126,8 +88,8 @@ public class EndlessSource {
     public List<Double> probabilityOfFailure4Source() {
         List<Double> list = new LinkedList<>();
         for (Generator generator : generators) {
-            int a = generator.getCountGenerateTask();
-            int b = generator.getCountFailedTask();
+            int a = generator.countGenerateTask;
+            int b = generator.countFailedTask;
             list.add((double) (b) / (double) (a));
         }
         return list;
@@ -136,30 +98,39 @@ public class EndlessSource {
     public Double probOfFailure() {
         double prob = 0;
         for (Generator generator : generators) {
-            int a = generator.getCountGenerateTask();
-            int b = generator.getCountFailedTask();
+            int a = generator.countGenerateTask;
+            int b = generator.countFailedTask;
             prob += (double) (b) / (double) (a);
         }
         prob /= generators.size();
         return prob;
     }
 
-    public List<Double> avgTimeOfExistTask4Source() {
+    public List<Double> avgBufferTime() {
         List<Double> list = new LinkedList<>();
         for (Generator generator : generators) {
-            double count = generator.getCountGenerateTask();
-            double timeExecute = generator.getSumExecuteTimeTask();
-            double timeWait = generator.getSumWaitTimeGenerate();
-
-            list.add((timeExecute + timeWait) / count);
+            double count = generator.countGenerateTask;
+            double timeBuffer = generator.bufferTime;
+            list.add(timeBuffer / count);
         }
         return list;
-    }*/
+    }
+
+    public List<Double> avgApplianceTime() {
+        List<Double> list = new LinkedList<>();
+        for (Generator generator : generators) {
+            double count = generator.countGenerateTask;
+            double timeaAppliance = generator.applianceTime;
+            list.add(timeaAppliance / count);
+        }
+        return list;
+    }
+
     public Task takeAndRegenerateTask(long barrier) {
         Task task = taskQueue.poll();
         if (task == null || countGeneratedTasks >= barrier) return task;
 
-        this.taskQueue.add(generators.get(task.numSource).createTask(task.start));
+        this.taskQueue.add(generators.get(task.numSource).createTask(task.START_TIME));
         countGeneratedTasks++;
         return task;
     }

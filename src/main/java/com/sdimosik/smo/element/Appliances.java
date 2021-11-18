@@ -7,7 +7,7 @@ import java.util.List;
 public class Appliances {
 
     private final Task[] appliance;
-    private final int[] time;
+    private final double[] time;
     private final int capacity;
     private int size;
 
@@ -21,7 +21,7 @@ public class Appliances {
         this.readIdx = 0;
         this.writeIdx = -1;
         this.size = 0;
-        time = new int[capacity];
+        time = new double[capacity];
         Arrays.fill(time, 0);
     }
 
@@ -36,7 +36,16 @@ public class Appliances {
         appliance[idx(writeIdx)] = task;
         size++;
 
+        time[idx(writeIdx)] += task.TIME_TO_EXEC;
+
         return true;
+    }
+
+    private void remove(int idx) {
+        if (idx >= 0 && idx < capacity && appliance[idx] != null) {
+            appliance[idx] = null;
+            size--;
+        }
     }
 
     private int idx(int idx) {
@@ -87,7 +96,7 @@ public class Appliances {
             return task.getTimeToComplete();
         }
 
-        if (task.getTimeToComplete() < input.taskQueue.peek().start) {
+        if (task.getTimeToComplete() < input.taskQueue.peek().START_TIME) {
             return task.getTimeToComplete();
         }
 
@@ -116,34 +125,6 @@ public class Appliances {
         return task;
     }
 
-/*    public void updateTimeInfo() {
-        for (int i = 0; i < capacity; i++) {
-            if (appliance[i] != null) {
-                time[i]++;
-                appliance[i].executeTask(1);
-            }
-        }
-    }
-
-    public List<Task> getCompleteTasksAndCleanUp(int time) {
-        List<Task> list = new LinkedList<>();
-        for (int i = 0; i < capacity; i++) {
-            if (appliance[i] != null && appliance[i].isDone()) {
-                list.add(appliance[i]);
-                appliance[i].setEnd(time);
-                remove(i);
-            }
-        }
-        return list;
-    }*/
-
-    private void remove(int idx) {
-        if (idx >= 0 && idx < capacity && appliance[idx] != null) {
-            appliance[idx] = null;
-            size--;
-        }
-    }
-
     @Override
     public String toString() {
         return "Appliances{" +
@@ -151,11 +132,11 @@ public class Appliances {
             '}';
     }
 
-    public List<Double> kUsedAppliance(int time) {
+    public List<Double> kUsedAppliance(double time) {
         List<Double> list = new LinkedList<>();
         for (int i = 0; i < capacity; i++) {
-            int local = this.time[i];
-            list.add((double) (local) / (double) (time));
+            double local = this.time[i];
+            list.add(local / time);
         }
         return list;
     }

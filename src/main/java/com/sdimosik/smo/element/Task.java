@@ -10,17 +10,17 @@ public class Task implements Comparable<Task> {
 
     public State state;
 
-    public final double timeToExec;
-    public final double start;
+    public final double TIME_TO_EXEC;
+    public final double START_TIME;
 
     private double startExecute;
-    private double end;
+    private double endTime;
 
-    public Task(int numSource, double startTime, double timeToExec) {
-        this.start = startTime;
-        this.end = startTime;
+    public Task(int numSource, double startTime, double TIME_TO_EXEC) {
+        this.START_TIME = startTime;
+        this.endTime = startTime;
         this.state = State.START;
-        this.timeToExec = timeToExec;
+        this.TIME_TO_EXEC = TIME_TO_EXEC;
 
         this.numSource = numSource;
         this.name = UUID.randomUUID().toString();
@@ -31,7 +31,7 @@ public class Task implements Comparable<Task> {
         switch (this.state) {
             case FAIL:
             case DONE:
-                this.end = time;
+                this.endTime = time;
                 break;
             case APPLIANCE:
                 this.startExecute = time;
@@ -40,31 +40,39 @@ public class Task implements Comparable<Task> {
     }
 
     public double getTimeToComplete(){
-        return startExecute + timeToExec;
+        return startExecute + TIME_TO_EXEC;
     }
 
     public boolean isDone(double currentTime) {
         return getTimeToComplete() < currentTime;
     }
 
-    public void setEnd(double time) {
-        end = time;
+    public void setEndTime(double time) {
+        endTime = time;
     }
 
     public double getTime() {
-        return end - start;
+        return endTime - START_TIME;
     }
 
     @Override
     public String toString() {
         return "\nTask{" +
             "name='" + name + '\'' +
-            ", leftMinutesToComplete=" + timeToExec +
+            ", leftMinutesToComplete=" + TIME_TO_EXEC +
             "}";
     }
 
     @Override
     public int compareTo(Task task) {
-        return Double.compare(start, task.start);
+        return Double.compare(START_TIME, task.START_TIME);
+    }
+
+    public double getStartExecute() {
+        return startExecute;
+    }
+
+    public double getEndTime() {
+        return endTime;
     }
 }
