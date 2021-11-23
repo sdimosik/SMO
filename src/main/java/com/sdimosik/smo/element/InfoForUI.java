@@ -12,6 +12,7 @@ public class InfoForUI {
     private final int countAppliances;
 
     private final String formatTime = "%-15s";
+    private final String formatTimeDouble = "%-15.3f";
     private final String formatSource = "%-7s";
 
     private final Task[] source;
@@ -87,13 +88,13 @@ public class InfoForUI {
         State stage = task.state;
 
         double time = getTimeForState(task);
-        System.out.printf("%-15.3f", time);
+        System.out.printf(formatTimeDouble, time);
 
-        soutArr(countSource, source);
+        formatPrintOurArr(countSource, source);
 
-        soutArr(countBuffer, buffer);
+        formatPrintOurArr(countBuffer, buffer);
 
-        soutArr(countAppliances, appliance);
+        formatPrintOurArr(countAppliances, appliance);
 
         if (stage != State.DONE) {
             System.out.printf(formatSource, "");
@@ -109,7 +110,7 @@ public class InfoForUI {
         System.out.println();
     }
 
-    private void soutArr(int size, Task[] arr) {
+    private void formatPrintOurArr(int size, Task[] arr) {
         for (int i = 0; i < size; i++) {
             if (arr[i] == null) {
                 System.out.printf(formatSource, "");
