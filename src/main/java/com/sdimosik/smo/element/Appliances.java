@@ -25,9 +25,9 @@ public class Appliances {
         Arrays.fill(time, 0);
     }
 
-    public boolean offer(Task task) {
+    public int offer(Task task) {
         if (isFull()) {
-            return false;
+            return -1;
         }
 
         writeIdx++;
@@ -36,9 +36,10 @@ public class Appliances {
         appliance[idx(writeIdx)] = task;
         size++;
 
-        time[idx(writeIdx)] += task.TIME_TO_EXEC;
+        time[idx(writeIdx)] += task.execTime;
+        task.numAppliance = idx(writeIdx);
 
-        return true;
+        return idx(writeIdx);
     }
 
     private void remove(int idx) {
@@ -96,7 +97,7 @@ public class Appliances {
             return task.getTimeToComplete();
         }
 
-        if (task.getTimeToComplete() < input.taskQueue.peek().START_TIME) {
+        if (task.getTimeToComplete() < input.taskQueue.peek().startTime) {
             return task.getTimeToComplete();
         }
 

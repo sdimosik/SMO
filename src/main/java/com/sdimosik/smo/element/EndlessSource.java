@@ -33,8 +33,9 @@ public class EndlessSource {
 
         public Task createTask(double currentTime) {
             double nextTime = currentTime + nextTime();
+            Task task = new Task(numSource, countGenerateTask, nextTime, 100);
             countGenerateTask++;
-            return new Task(numSource, nextTime, 100);
+            return task;
         }
 
         private double nextTime() {
@@ -130,7 +131,7 @@ public class EndlessSource {
         Task task = taskQueue.poll();
         if (task == null || countGeneratedTasks >= barrier) return task;
 
-        this.taskQueue.add(generators.get(task.numSource).createTask(task.START_TIME));
+        this.taskQueue.add(generators.get(task.numSource).createTask(task.startTime));
         countGeneratedTasks++;
         return task;
     }

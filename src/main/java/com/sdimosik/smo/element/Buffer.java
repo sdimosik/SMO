@@ -38,6 +38,8 @@ public class Buffer {
         queue.offer(idx(writeIdx));
         size++;
 
+        task.numBuffer = idx(writeIdx);
+
         return null;
     }
 
@@ -76,6 +78,8 @@ public class Buffer {
         failureTask.setEndTime(time);
         data[oldIdx] = task;
         queue.offer(oldIdx);
+        task.numBuffer = idx(writeIdx);
+
         return failureTask;
     }
 
@@ -88,6 +92,15 @@ public class Buffer {
         data[idx(readIdx)] = null;
         readIdx++;
         size--;
+
+        try {
+            queue.poll();
+        } catch (NullPointerException e) {
+            // It should never be
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(e);
+        }
+
         return nextValue;
     }
 
