@@ -1,4 +1,6 @@
-package com.sdimosik.smo.element;
+package com.sdimosik.smo;
+
+import com.sdimosik.smo.element.Task;
 
 import static com.sdimosik.smo.Utils.State;
 
@@ -18,12 +20,6 @@ public class InfoForUI {
     private final Task[] source;
     private final Task[] buffer;
     private final Task[] appliance;
-
-    public final Queue<Task> eventStartTask = new LinkedList<>();
-    public final Queue<Task> eventBufferTask = new LinkedList<>();
-    public final Queue<Task> eventApplianceTask = new LinkedList<>();
-    public final Queue<Task> eventFailTask = new LinkedList<>();
-    public final Queue<Task> eventDoneTask = new LinkedList<>();
 
     public InfoForUI(int countSource, int countBuffer, int countAppliances) {
         this.countSource = countSource;
@@ -53,7 +49,6 @@ public class InfoForUI {
         }
         System.out.printf(formatSource, "OK");
         System.out.printf(formatSource, "ОТК");
-        System.out.println();
     }
 
     public void update(Task task) {
@@ -107,7 +102,6 @@ public class InfoForUI {
         } else {
             System.out.printf(formatSource, "" + task.numSource + "." + task.num);
         }
-        System.out.println();
     }
 
     private void formatPrintOurArr(int size, Task[] arr) {
@@ -136,16 +130,5 @@ public class InfoForUI {
             default:
                 return 0;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "InfoForUI:" +
-            "\neventStartTask=" + eventStartTask +
-            "\neventBufferTask=" + eventBufferTask +
-            "\neventApplianceTask=" + eventApplianceTask +
-            "\neventDoneTask=" + eventDoneTask +
-            "\neventFailTask=" + eventFailTask +
-            "\n---------------------";
     }
 }

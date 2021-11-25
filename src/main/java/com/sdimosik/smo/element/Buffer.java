@@ -120,13 +120,6 @@ public class Buffer {
         return idx % capacity;
     }
 
-    @Override
-    public String toString() {
-        return "Buffer{" +
-            "data=" + Arrays.toString(data) +
-            '}';
-    }
-
     public int size(){
         return size;
     }

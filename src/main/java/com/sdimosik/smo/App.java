@@ -3,8 +3,6 @@ package com.sdimosik.smo;
 import com.sdimosik.smo.element.Appliances;
 import com.sdimosik.smo.element.Buffer;
 import com.sdimosik.smo.element.EndlessSource;
-import com.sdimosik.smo.element.InfoForUI;
-import com.sdimosik.smo.element.Report;
 import com.sdimosik.smo.element.Task;
 
 import java.util.Scanner;
@@ -16,7 +14,7 @@ public class App {
     // 0 - step
     // 1 - report
     // 2 - ultimate
-    private static final int MODE = 2;
+    private static final int MODE = 1;
 
     private static final int INPUT_COUNT = 3;
     private static final int BUFFER_CAPACITY = 3;
@@ -56,7 +54,7 @@ public class App {
     public static void main(String[] args) {
         showSettings();
         fill();
-        infoForUI.startPrint();
+        if (canShowStep()) infoForUI.startPrint();
 
         while (isTasksExist()) {
             Task newTask = input.takeAndRegenerateTask(BARRIER_TASK_COUNT);
@@ -93,7 +91,6 @@ public class App {
                     .get(completedTask.numSource)
                     .addAppliance(completedTask.getEndTime() - completedTask.getStartAppliancesTime());
             }
-
         }
 
         if (canShowReport()) {
@@ -110,45 +107,15 @@ public class App {
 
     private static void updateData(Task newTask, State stage, double time) {
         newTask.updateState(stage, time);
-        infoForUI.update(newTask);
-        if (canShowStep() && MODE == 0) {
-            IN.nextLine();
-        }
-    }
-
-    /*    private static void bufferingAndFailingDiscipline(List<Task> newTasks, Buffer buffer) {
-        List<Task> failures = new LinkedList<>();
-        for (Task task : newTasks) {
-            Task failureTask = buffer.offer(task, currentTime);
-            if (failureTask != null) {
-                failures.add(failureTask);
-                input.generators.get(failureTask.numSource).addCountFailedTask(1);
-                input.generators.get(failureTask.numSource).addSumExecuteTimeTask(failureTask.getTime());
+        if (canShowStep()) {
+            if (MODE == 0) {
+                IN.nextLine();
+            } else {
+                System.out.println();
             }
-        }
-
-        if (canShowStep()) {
-            System.out.printf("\n\n%s", buffer);
-            // Таски, которые отлетели
-            System.out.printf("\n\nfailures\n%s", failures);
+            infoForUI.update(newTask);
         }
     }
-
-    private static void servicingDiscipline(Buffer buffer, Appliances appliances) {
-        appliances.updateTimeInfo();
-        List<Task> completeTasks = appliances.getCompleteTasksAndCleanUp(currentTime);
-        completeTasks.forEach(task -> input.generators.get(task.numSource).addSumExecuteTimeTask(task.getTime()));
-
-        while (appliances.isNotFull() && buffer.isNotEmpty()) {
-            Task task = buffer.poll();
-            appliances.offer(task);
-        }
-
-        if (canShowStep()) {
-            System.out.printf("\n\nappliances%s", appliances);
-            System.out.printf("\n\ncompleteTasks\n%s\n\n", completeTasks);
-        }
-    }*/
 
     private static boolean isTasksExist() {
         return input.allowedGenerate(BARRIER_TASK_COUNT) || buffer.isNotEmpty() || appliances.isNotEmpty();

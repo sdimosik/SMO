@@ -1,4 +1,4 @@
-package com.sdimosik.smo.element;
+package com.sdimosik.smo;
 
 import dnl.utils.text.table.TextTable;
 

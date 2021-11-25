@@ -78,14 +78,6 @@ public class EndlessSource {
         return list;
     }
 
-    public Integer countTasks() {
-        int sum = 0;
-        for (Generator generator : generators) {
-            sum += generator.countGenerateTask;
-        }
-        return sum;
-    }
-
     public List<Double> probabilityOfFailure4Source() {
         List<Double> list = new LinkedList<>();
         for (Generator generator : generators) {
@@ -94,17 +86,6 @@ public class EndlessSource {
             list.add((double) (b) / (double) (a));
         }
         return list;
-    }
-
-    public Double probOfFailure() {
-        double prob = 0;
-        for (Generator generator : generators) {
-            int a = generator.countGenerateTask;
-            int b = generator.countFailedTask;
-            prob += (double) (b) / (double) (a);
-        }
-        prob /= generators.size();
-        return prob;
     }
 
     public List<Double> avgBufferTime() {

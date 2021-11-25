@@ -126,13 +126,6 @@ public class Appliances {
         return task;
     }
 
-    @Override
-    public String toString() {
-        return "Appliances{" +
-            "appliance=" + Arrays.toString(appliance) +
-            '}';
-    }
-
     public List<Double> kUsedAppliance(double time) {
         List<Double> list = new LinkedList<>();
         for (int i = 0; i < capacity; i++) {
