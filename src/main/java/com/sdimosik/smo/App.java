@@ -99,7 +99,9 @@ public class App {
                 input.probabilityOfFailure4Source(),
                 input.avgBufferTime(),
                 input.avgApplianceTime(),
-                appliances.kUsedAppliance(currentTime)
+                appliances.kUsedAppliance(currentTime),
+                input.bufferDispersion(),
+                input.applianceDispersion()
             );
             report.print();
         }

@@ -10,31 +10,39 @@ public class Report {
     private final List<Double> avgTimeInBuffer;
     private final List<Double> avgTimeInAppliance;
     private final List<Double> kUsedAppliance;
+    private final List<Double> bufferDispersion;
+    private final List<Double> applianceDispersion;
 
     public Report(
         List<Integer> countGeneratedTask4Source,
         List<Double> probabilityOfFailure4Source,
         List<Double> avgTimeInBuffer,
         List<Double> avgTimeInAppliance,
-        List<Double> kUsedAppliance
+        List<Double> kUsedAppliance,
+        List<Double> bufferDispersion,
+        List<Double> applianceDispersion
     ) {
         this.countGeneratedTask4Source = countGeneratedTask4Source;
         this.probabilityOfFailure4Source = probabilityOfFailure4Source;
         this.avgTimeInBuffer = avgTimeInBuffer;
         this.avgTimeInAppliance = avgTimeInAppliance;
         this.kUsedAppliance = kUsedAppliance;
+        this.bufferDispersion = bufferDispersion;
+        this.applianceDispersion = applianceDispersion;
     }
 
     public void print() {
 
         System.out.println("\n-----------------Table 1-----------------");
-        String[] namesT1 = new String[6];
+        String[] namesT1 = new String[8];
         namesT1[0] = "numOfSource";
         namesT1[1] = "countTask";
         namesT1[2] = "Prob of Fail";
         namesT1[3] = "T exist";
         namesT1[4] = "T buffer";
         namesT1[5] = "T appliance";
+        namesT1[6] = "D buffer";
+        namesT1[7] = "D appliance";
 
         int sizeT1 = countGeneratedTask4Source.size();
         Object[][] dataT1 = new Object[sizeT1][namesT1.length];
@@ -45,6 +53,8 @@ public class Report {
             dataT1[i][3] = avgTimeInBuffer.get(i) + avgTimeInAppliance.get(i);
             dataT1[i][4] = avgTimeInBuffer.get(i);
             dataT1[i][5] = avgTimeInAppliance.get(i);
+            dataT1[i][6] = bufferDispersion.get(i);
+            dataT1[i][7] = applianceDispersion.get(i);
         }
         TextTable t1 = new TextTable(namesT1, dataT1);
         t1.printTable();

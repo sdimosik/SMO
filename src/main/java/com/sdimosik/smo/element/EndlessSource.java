@@ -20,7 +20,9 @@ public class EndlessSource {
         private int countGenerateTask = 0;
         private int countFailedTask = 0;
         private double bufferTime = 0;
+        private List<Double> bufferTimeList = new LinkedList<>();
         private double applianceTime = 0;
+        private List<Double> applianceTimeList = new LinkedList<>();
 
         public final int numSource;
 
@@ -47,10 +49,12 @@ public class EndlessSource {
         }
 
         public void addBufferTime(double time) {
+            bufferTimeList.add(time);
             bufferTime += time;
         }
 
         public void addAppliance(double time) {
+            applianceTimeList.add(time);
             applianceTime += time;
         }
     }
@@ -98,12 +102,44 @@ public class EndlessSource {
         return list;
     }
 
+    // disp = (sum ((Ti - Tср)^2) ) / n
+    public List<Double> bufferDispersion() {
+        List<Double> avgBufferTime = avgBufferTime();
+
+        List<Double> list = new LinkedList<>();
+        for (int i = 0, generatorsSize = generators.size(); i < generatorsSize; i++) {
+            Generator generator = generators.get(i);
+            double sum = 0;
+            for (Double time : generator.bufferTimeList) {
+                sum += Math.pow(time - avgBufferTime.get(i), 2);
+            }
+            list.add(sum / generators.size());
+        }
+        return list;
+    }
+
     public List<Double> avgApplianceTime() {
         List<Double> list = new LinkedList<>();
         for (Generator generator : generators) {
             double count = generator.countGenerateTask;
             double timeaAppliance = generator.applianceTime;
             list.add(timeaAppliance / count);
+        }
+        return list;
+    }
+
+    // disp = (sum ((Ti - Tср)^2) ) / n
+    public List<Double> applianceDispersion() {
+        List<Double> avgApplianceTime = avgApplianceTime();
+
+        List<Double> list = new LinkedList<>();
+        for (int i = 0, generatorsSize = generators.size(); i < generatorsSize; i++) {
+            Generator generator = generators.get(i);
+            double sum = 0;
+            for (Double time : generator.applianceTimeList) {
+                sum += Math.pow(time - avgApplianceTime.get(i), 2);
+            }
+            list.add(sum / generators.size());
         }
         return list;
     }
