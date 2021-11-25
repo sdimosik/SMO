@@ -35,7 +35,7 @@ public class EndlessSource {
 
         public Task createTask(double currentTime) {
             double nextTime = currentTime + nextTime();
-            Task task = new Task(numSource, countGenerateTask, nextTime, 100);
+            Task task = new Task(numSource, countGenerateTask, nextTime, random.nextGaussian() * 15 + 100);
             countGenerateTask++;
             return task;
         }

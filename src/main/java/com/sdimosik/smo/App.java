@@ -14,7 +14,7 @@ public class App {
     // 0 - step
     // 1 - report
     // 2 - ultimate
-    private static final int MODE = 1;
+    private static final int MODE = 0;
 
     private static final int INPUT_COUNT = 3;
     private static final int BUFFER_CAPACITY = 3;
