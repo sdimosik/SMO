@@ -77,9 +77,9 @@ public class Buffer {
         Task failureTask = data[oldIdx];
         failureTask.setEndTime(time);
         data[oldIdx] = task;
-        queue.offer(oldIdx);
-        task.numBuffer = idx(writeIdx);
+        task.numBuffer = oldIdx;
 
+        queue.offer(oldIdx);
         return failureTask;
     }
 

@@ -16,10 +16,10 @@ public class App {
     // 2 - ultimate
     private static final int MODE = 0;
 
+    private static final long BARRIER_TASK_COUNT =  10;
     private static final int INPUT_COUNT = 3;
     private static final int BUFFER_CAPACITY = 3;
-    private static final int APPLIANCES_CAPACITY = 4;
-    private static final long BARRIER_TASK_COUNT = 10;
+    private static final int APPLIANCES_CAPACITY = 5;
     private static final Scanner IN = new Scanner(System.in);
 
     private static EndlessSource input;
@@ -44,7 +44,7 @@ public class App {
     }
 
     private static void fill() {
-        input = new EndlessSource(INPUT_COUNT, 4.8, 20, 0);
+        input = new EndlessSource(INPUT_COUNT, 25, 50, 0);
         buffer = new Buffer(BUFFER_CAPACITY);
         appliances = new Appliances(APPLIANCES_CAPACITY);
         currentTime = 0.0;
@@ -64,12 +64,12 @@ public class App {
                 currentTime = newTask.startTime;
 
                 Task failTask = buffer.offer(newTask, currentTime);
-                updateData(newTask, State.BUFFER, currentTime);
-
                 if (failTask != null) {
                     input.generators.get(failTask.numSource).addCountFailedTask(1);
                     updateData(failTask, State.FAIL, currentTime);
                 }
+
+                updateData(newTask, State.BUFFER, currentTime);
             }
 
             if (appliances.isNotFull() && buffer.isNotEmpty()) {
@@ -111,11 +111,13 @@ public class App {
         newTask.updateState(stage, time);
         if (canShowStep()) {
             if (MODE == 0) {
-                IN.nextLine();
+                System.out.println();
+                //IN.nextLine();
             } else {
                 System.out.println();
             }
             infoForUI.update(newTask);
+            int a = 5;
         }
     }
 
