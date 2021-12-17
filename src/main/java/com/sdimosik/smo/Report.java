@@ -59,6 +59,11 @@ public class Report {
         TextTable t1 = new TextTable(namesT1, dataT1);
         t1.printTable();
 
+        double avgProb = 0;
+        for(double value : probabilityOfFailure4Source) avgProb += value;
+        avgProb /= probabilityOfFailure4Source.size();
+        System.out.println("Avg Prob of Fail: " + avgProb);
+
         System.out.println("\n-----------------Table 2-----------------");
         String[] namesT2 = new String[2];
         namesT2[0] = "numOfAppliance";
@@ -72,5 +77,10 @@ public class Report {
         }
         TextTable t2 = new TextTable(namesT2, dataT2);
         t2.printTable();
+
+        double avgK = 0;
+        for(double value : kUsedAppliance) avgK += value;
+        avgK /= kUsedAppliance.size();
+        System.out.println("Avg K of Used : " + avgK);
     }
 }

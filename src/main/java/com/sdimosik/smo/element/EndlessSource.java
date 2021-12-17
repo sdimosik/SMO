@@ -1,5 +1,10 @@
 package com.sdimosik.smo.element;
 
+import cern.jet.random.Normal;
+import cern.jet.random.Poisson;
+import cern.jet.random.engine.DRand;
+import cern.jet.random.engine.RandomEngine;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,12 +13,14 @@ import java.util.Queue;
 import java.util.Random;
 
 public class EndlessSource {
+    public static final RandomEngine randomEngine = new DRand();
+    private static final Normal paus = new Normal(3, Math.sqrt(3), randomEngine);
+    private static final Normal normal = new Normal(10, 1, randomEngine);
     public final List<Generator> generators;
     public final Queue<Task> taskQueue;
     private long countGeneratedTasks;
 
     public static class Generator {
-        private final Random random;
         private final double avg;
         private final double dev;
 
@@ -30,18 +37,14 @@ public class EndlessSource {
             this.avg = avg;
             this.dev = dev;
             this.numSource = numSource;
-            this.random = new Random();
         }
 
         public Task createTask(double currentTime) {
-            double nextTime = currentTime + nextTime();
-            Task task = new Task(numSource, countGenerateTask, nextTime, random.nextGaussian() * 15 + 100);
+            double nextTime = currentTime + paus.nextDouble();
+            // random.nextGaussian() * 15 + 100
+            Task task = new Task(numSource, countGenerateTask, nextTime, normal.nextDouble());
             countGenerateTask++;
             return task;
-        }
-
-        private double nextTime() {
-            return random.nextGaussian() * dev + avg;
         }
 
         public void addCountFailedTask(int count) {

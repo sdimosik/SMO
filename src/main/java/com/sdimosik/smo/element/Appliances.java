@@ -26,11 +26,11 @@ public class Appliances {
     }
 
     public int offer(Task task) {
+        writeIdx = 0;
         if (isFull()) {
             return -1;
         }
 
-        writeIdx++;
         skipIdx(writeIdx, true);
 
         appliance[idx(writeIdx)] = task;

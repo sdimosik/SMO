@@ -14,11 +14,11 @@ public class App {
     // 0 - step
     // 1 - report
     // 2 - ultimate
-    private static final int MODE = 0;
+    private static final int MODE = 1;
 
-    private static final long BARRIER_TASK_COUNT =  10;
+    private static final long BARRIER_TASK_COUNT =  270;
     private static final int INPUT_COUNT = 3;
-    private static final int BUFFER_CAPACITY = 3;
+    private static final int BUFFER_CAPACITY = 50;
     private static final int APPLIANCES_CAPACITY = 5;
     private static final Scanner IN = new Scanner(System.in);
 
