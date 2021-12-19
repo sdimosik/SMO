@@ -24,14 +24,5 @@ public class Main {
         frame.setVisible(true);
     }
 
-    static class AnswerWorker extends SwingWorker<Integer, Integer>{
-
-        @Override
-        protected Integer doInBackground() throws Exception {
-            return null;
-        }
-
-
-    }
 }
 

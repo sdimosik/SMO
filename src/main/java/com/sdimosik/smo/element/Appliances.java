@@ -3,15 +3,18 @@ package com.sdimosik.smo.element;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Appliances {
 
+    private final EndlessSource endlessSource;
     private final Task[] appliance;
     private final double[] time;
     private final int capacity;
     private int size;
 
-    public Appliances(int capacity) {
+    public Appliances(EndlessSource endlessSource, int capacity) {
+        this.endlessSource = endlessSource;
         this.capacity = capacity;
         this.appliance = new Task[capacity];
         Arrays.fill(appliance, null);
@@ -90,7 +93,7 @@ public class Appliances {
         int pos = 0;
         for (int i = 0; i < capacity; i++) {
             if (appliance[i] != null
-                && (appliance[i].isDone(currentTime) || (isEmptyQueueTask))
+                && (isEmptyQueueTask || (appliance[i].isDone(currentTime) || checkQueueSource(i, currentTime)))
                 && appliance[i].getTimeToComplete() < minTime
             ) {
                 task = appliance[i];
@@ -100,6 +103,19 @@ public class Appliances {
         }
         if (removeFlag) remove(pos);
         return task;
+    }
+
+    private boolean checkQueueSource(int i,double currentTime){
+        Task task = appliance[i];
+
+        AtomicBoolean res = new AtomicBoolean(false);
+        endlessSource.taskQueue.forEach(tmp ->{
+            if (task.getTimeToComplete() < tmp.startTime){
+                res.set(true);
+            }
+        });
+
+        return res.get();
     }
 
     public List<Double> kUsedAppliance(double time) {

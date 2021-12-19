@@ -72,12 +72,12 @@ public class App {
     private void fill() {
         input = new EndlessSource(INPUT_COUNT, LAMBDA, MEAN, VARIANCE, 0);
         buffer = new Buffer(BUFFER_CAPACITY);
-        appliances = new Appliances(APPLIANCES_CAPACITY);
+        appliances = new Appliances(input, APPLIANCES_CAPACITY);
         currentTime = 0.0;
         //infoForUI = new InfoForUI(INPUT_COUNT, BUFFER_CAPACITY, APPLIANCES_CAPACITY);
     }
 
-    public void prepare(){
+    public void prepare() {
         fill();
     }
 
@@ -145,7 +145,7 @@ public class App {
 
         while (isTasksExist()) {
             // -------------- 1
-                       Task newTask = input.takeAndRegenerateTask(BARRIER_TASK_COUNT);
+            Task newTask = input.takeAndRegenerateTask(BARRIER_TASK_COUNT);
 
             if (newTask != null) {
                 updateData(newTask, State.START, currentTime);

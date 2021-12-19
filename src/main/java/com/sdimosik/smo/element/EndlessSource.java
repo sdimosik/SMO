@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 public class EndlessSource {
     public static final RandomEngine randomEngine = new DRand();
@@ -18,7 +19,9 @@ public class EndlessSource {
     private long countGeneratedTasks;
 
     public static class Generator {
+        private final double lambda;
         private final Poisson paus;
+        private final Random random = new Random();
         private final Normal normal;
         private int countGenerateTask = 0;
         private int countFailedTask = 0;
@@ -29,14 +32,15 @@ public class EndlessSource {
 
         public final int numSource;
 
-        public Generator(Poisson paus, Normal normal, int numSource) {
+        public Generator(double lambda, Poisson paus, Normal normal, int numSource) {
+            this.lambda = lambda;
             this.paus = paus;
             this.normal = normal;
             this.numSource = numSource;
         }
 
         public Task createTask(double currentTime) {
-            double nextTime = currentTime + paus.nextDouble();
+            double nextTime = currentTime + (-1 * lambda) * Math.log(random.nextDouble());
             // random.nextGaussian() * 15 + 100
             Task task = new Task(numSource, countGenerateTask, nextTime, normal.nextDouble());
             countGenerateTask++;
@@ -64,6 +68,7 @@ public class EndlessSource {
         this.generators = new ArrayList<>();
         for (int i = 0; i < capacity; i++) {
             this.generators.add(new Generator(
+                lambda,
                 new Poisson(lambda, randomEngine),
                 //new Normal(lambda, Math.sqrt(lambda), randomEngine),
                 new Normal(mean, variance, randomEngine), i));

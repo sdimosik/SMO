@@ -53,7 +53,8 @@ public class Task implements Comparable<Task> {
     }
 
     public boolean isDone(double currentTime) {
-        return getTimeToComplete() < currentTime;
+        boolean res = getTimeToComplete() < currentTime;
+        return res;
     }
 
     public void setEndTime(double time) {
