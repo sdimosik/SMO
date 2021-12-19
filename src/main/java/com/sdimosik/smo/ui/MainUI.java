@@ -181,7 +181,7 @@ public class MainUI {
                 app.step4();
                 break;
             case 4:
-                app.step5();
+                if (app.step5()) currentState--;
                 break;
         }
 

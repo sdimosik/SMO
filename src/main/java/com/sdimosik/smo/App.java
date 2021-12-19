@@ -110,17 +110,19 @@ public class App {
         return false;
     }
 
-    public boolean step4() {
-        if (appliances.isNotFull() && buffer.isNotEmpty()) {
+    public void step4() {
+        while (appliances.isNotFull() && buffer.isNotEmpty()) {
             Task afterBufferTask = buffer.poll();
             appliances.offer(afterBufferTask);
             updateData(afterBufferTask, State.APPLIANCE, currentTime);
+            double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
+            if (delta < 0){
+                int a =5;
+            }
             input.generators
                 .get(afterBufferTask.numSource)
-                .addBufferTime(afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime);
-            return true;
+                .addBufferTime(delta);
         }
-        return false;
     }
 
     public boolean step5() {
@@ -133,6 +135,19 @@ public class App {
             input.generators
                 .get(completedTask.numSource)
                 .addAppliance(completedTask.getEndTime() - completedTask.getStartAppliancesTime());
+
+            if (appliances.isNotFull() && buffer.isNotEmpty()) {
+                Task afterBufferTask = buffer.poll();
+                appliances.offer(afterBufferTask);
+                updateData(afterBufferTask, State.APPLIANCE, currentTime);
+                double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
+                if (delta < 0){
+                    int a =5;
+                }
+                input.generators
+                    .get(afterBufferTask.numSource)
+                    .addBufferTime(delta);
+            }
             return true;
         }
         return false;
@@ -163,25 +178,44 @@ public class App {
             }
 
             // -------------- 4
-            if (appliances.isNotFull() && buffer.isNotEmpty()) {
+            while (appliances.isNotFull() && buffer.isNotEmpty()) {
                 Task afterBufferTask = buffer.poll();
                 appliances.offer(afterBufferTask);
                 updateData(afterBufferTask, State.APPLIANCE, currentTime);
+                double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
+                if (delta < 0){
+                    int a =5;
+                }
                 input.generators
                     .get(afterBufferTask.numSource)
-                    .addBufferTime(afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime);
+                    .addBufferTime(delta);
             }
 
             // -------------- 5
             double completionTime = appliances.getCompletionsTimeOfTask(currentTime, input);
 
-            if (currentTime != completionTime) {
+            while (currentTime != completionTime) {
                 Task completedTask = appliances.getCompleteTask(currentTime, input);
-                currentTime = completionTime;
+                double old = currentTime;
+                currentTime = Math.max(completionTime, currentTime);
                 updateData(completedTask, State.DONE, completionTime);
                 input.generators
                     .get(completedTask.numSource)
                     .addAppliance(completedTask.getEndTime() - completedTask.getStartAppliancesTime());
+                completionTime = appliances.getCompletionsTimeOfTask(currentTime, input);
+
+                if (appliances.isNotFull() && buffer.isNotEmpty()) {
+                    Task afterBufferTask = buffer.poll();
+                    appliances.offer(afterBufferTask);
+                    updateData(afterBufferTask, State.APPLIANCE, currentTime);
+                    double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
+                    if (delta < 0){
+                        int a =5;
+                    }
+                    input.generators
+                        .get(afterBufferTask.numSource)
+                        .addBufferTime(delta);
+                }
             }
         }
 

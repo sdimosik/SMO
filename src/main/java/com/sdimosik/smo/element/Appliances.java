@@ -1,9 +1,12 @@
 package com.sdimosik.smo.element;
 
+import com.google.common.util.concurrent.AtomicDouble;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Appliances {
 
@@ -93,7 +96,7 @@ public class Appliances {
         int pos = 0;
         for (int i = 0; i < capacity; i++) {
             if (appliance[i] != null
-                && (isEmptyQueueTask || (appliance[i].isDone(currentTime) || checkQueueSource(i, currentTime)))
+                && (isEmptyQueueTask || ((appliance[i].isDone(currentTime) || checkQueueSource(i, currentTime))))
                 && appliance[i].getTimeToComplete() < minTime
             ) {
                 task = appliance[i];
@@ -105,7 +108,7 @@ public class Appliances {
         return task;
     }
 
-    private boolean checkQueueSource(int i,double currentTime){
+    private boolean checkQueueSource(int i, double currentTime) {
         Task task = appliance[i];
 
         AtomicBoolean res = new AtomicBoolean(false);
@@ -117,6 +120,19 @@ public class Appliances {
 
         return res.get();
     }
+
+    /*
+       Task task = appliance[i];
+
+        AtomicDouble minStartTime = new AtomicDouble(Double.MAX_VALUE);
+        endlessSource.taskQueue.forEach(tmp -> {
+            if (tmp.startTime <= minStartTime.get()) {
+                minStartTime.set(tmp.startTime);
+            }
+        });
+
+        return task.getTimeToComplete() <= minStartTime.get();
+     */
 
     public List<Double> kUsedAppliance(double time) {
         List<Double> list = new LinkedList<>();

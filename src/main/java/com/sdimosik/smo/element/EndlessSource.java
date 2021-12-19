@@ -40,7 +40,7 @@ public class EndlessSource {
         }
 
         public Task createTask(double currentTime) {
-            double nextTime = currentTime + (-1 * lambda) * Math.log(random.nextDouble());
+            double nextTime = currentTime + paus.nextDouble();//(-1 * lambda) * Math.log(random.nextGaussian());
             // random.nextGaussian() * 15 + 100
             Task task = new Task(numSource, countGenerateTask, nextTime, normal.nextDouble());
             countGenerateTask++;
@@ -103,8 +103,13 @@ public class EndlessSource {
         List<Double> list = new LinkedList<>();
         for (Generator generator : generators) {
             double count = generator.countGenerateTask;
-            double timeBuffer = generator.bufferTime;
-            list.add(timeBuffer / count);
+            double inf = 0;
+            for (Double timeBuffer : generator.bufferTimeList) {
+                double tmp = timeBuffer / count;
+                inf += (tmp);
+            }
+            //double timeBuffer = generator.bufferTime;
+            list.add(inf);
         }
         return list;
     }
