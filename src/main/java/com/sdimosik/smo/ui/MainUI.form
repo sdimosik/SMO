@@ -111,7 +111,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="10"/>
+              <text value="20000"/>
             </properties>
           </component>
           <component id="284b9" class="javax.swing.JTextField" binding="sourceTextField">
@@ -165,7 +165,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="4"/>
+              <text value="2"/>
             </properties>
           </component>
           <component id="82962" class="javax.swing.JLabel">
@@ -193,7 +193,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="3"/>
+              <text value="30"/>
             </properties>
           </component>
           <component id="d1cad" class="javax.swing.JTextField" binding="meanTextField">
@@ -203,7 +203,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="10"/>
+              <text value="1"/>
             </properties>
           </component>
           <component id="a2f1a" class="javax.swing.JTextField" binding="variantsTextField">
@@ -213,7 +213,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="2"/>
+              <text value="0.5"/>
             </properties>
           </component>
           <component id="d7c27" class="javax.swing.JLabel">
