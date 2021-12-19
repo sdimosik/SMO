@@ -11,65 +11,41 @@ public class Appliances {
     private final int capacity;
     private int size;
 
-    private int writeIdx;
-    private int readIdx;
-
     public Appliances(int capacity) {
         this.capacity = capacity;
         this.appliance = new Task[capacity];
         Arrays.fill(appliance, null);
-        this.readIdx = 0;
-        this.writeIdx = -1;
         this.size = 0;
         time = new double[capacity];
         Arrays.fill(time, 0);
     }
 
     public int offer(Task task) {
-        writeIdx = 0;
-        if (isFull()) {
-            return -1;
+        int writeIdx = 0;
+
+        boolean isFree = false;
+        for (int i = 0; i < appliance.length; i++) {
+            if (appliance[i] == null) {
+                isFree = true;
+                writeIdx = i;
+                break;
+            }
         }
+        if (!isFree) return -1;
 
-        skipIdx(writeIdx, true);
-
-        appliance[idx(writeIdx)] = task;
+        appliance[writeIdx] = task;
         size++;
 
-        time[idx(writeIdx)] += task.execTime;
-        task.numAppliance = idx(writeIdx);
+        time[writeIdx] += task.execTime;
+        task.numAppliance = writeIdx;
 
-        return idx(writeIdx);
+        return writeIdx;
     }
 
     private void remove(int idx) {
         if (idx >= 0 && idx < capacity && appliance[idx] != null) {
             appliance[idx] = null;
             size--;
-        }
-    }
-
-    private int idx(int idx) {
-        return idx % capacity;
-    }
-
-    private void skipIdx(final int start, boolean skipFullIdx) {
-        boolean finded = false;
-
-        for (int i = idx(start); i < capacity; i++) {
-            if (skipFullIdx == (appliance[i] == null)) {
-                finded = true;
-                writeIdx = i;
-                break;
-            }
-        }
-        if (finded) return;
-
-        for (int i = 0; i < idx(start); i++) {
-            if (skipFullIdx == (appliance[i] == null)) {
-                writeIdx = i;
-                break;
-            }
         }
     }
 

@@ -10,20 +10,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Random;
 
 public class EndlessSource {
     public static final RandomEngine randomEngine = new DRand();
-    private static final Normal paus = new Normal(3, Math.sqrt(3), randomEngine);
-    private static final Normal normal = new Normal(10, 1, randomEngine);
     public final List<Generator> generators;
     public final Queue<Task> taskQueue;
     private long countGeneratedTasks;
 
     public static class Generator {
-        private final double avg;
-        private final double dev;
-
+        private final Poisson paus;
+        private final Normal normal;
         private int countGenerateTask = 0;
         private int countFailedTask = 0;
         private double bufferTime = 0;
@@ -33,9 +29,9 @@ public class EndlessSource {
 
         public final int numSource;
 
-        public Generator(double dev, double avg, int numSource) {
-            this.avg = avg;
-            this.dev = dev;
+        public Generator(Poisson paus, Normal normal, int numSource) {
+            this.paus = paus;
+            this.normal = normal;
             this.numSource = numSource;
         }
 
@@ -62,12 +58,15 @@ public class EndlessSource {
         }
     }
 
-    public EndlessSource(int capacity, double dev, double avg, int startTime) {
+    public EndlessSource(int capacity, double lambda, double mean, double variance, int startTime) {
         this.countGeneratedTasks = 0;
 
         this.generators = new ArrayList<>();
         for (int i = 0; i < capacity; i++) {
-            this.generators.add(new Generator(dev, avg, i));
+            this.generators.add(new Generator(
+                new Poisson(lambda, randomEngine),
+                //new Normal(lambda, Math.sqrt(lambda), randomEngine),
+                new Normal(mean, variance, randomEngine), i));
         }
 
         this.taskQueue = new PriorityQueue<>();
