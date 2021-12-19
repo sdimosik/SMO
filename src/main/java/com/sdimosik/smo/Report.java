@@ -5,13 +5,13 @@ import dnl.utils.text.table.TextTable;
 import java.util.List;
 
 public class Report {
-    private final List<Integer> countGeneratedTask4Source;
-    private final List<Double> probabilityOfFailure4Source;
-    private final List<Double> avgTimeInBuffer;
-    private final List<Double> avgTimeInAppliance;
-    private final List<Double> kUsedAppliance;
-    private final List<Double> bufferDispersion;
-    private final List<Double> applianceDispersion;
+    public final List<Integer> countGeneratedTask4Source;
+    public final List<Double> probabilityOfFailure4Source;
+    public final List<Double> avgTimeInBuffer;
+    public final List<Double> avgTimeInAppliance;
+    public final List<Double> kUsedAppliance;
+    public final List<Double> bufferDispersion;
+    public final List<Double> applianceDispersion;
 
     public Report(
         List<Integer> countGeneratedTask4Source,
