@@ -1,14 +1,12 @@
 package com.sdimosik.smo.ui;
 
 import com.sdimosik.smo.App;
-import com.sdimosik.smo.Report;
 import com.sdimosik.smo.Utils;
+import com.sdimosik.smo.element.Report;
 import com.sdimosik.smo.element.Task;
-import dnl.utils.text.table.TextTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,25 +50,14 @@ public class MainUI {
     private DefaultTableModel model;
     private DefaultTableModel model2;
 
-    private Thread thread;
     private App app;
     private int currentState = 0;
     private Task newTask;
     boolean isUpdateManual = false;
 
-    private final Object lock = new Object();
-
     public MainUI() {
         autoPanel2.setVisible(false);
         autoPanel1.setVisible(false);
-        isManualRadioButton.addItemListener(itemEvent -> {
-            // TODO clear
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
-                //createManualTable();
-            } else if (itemEvent.getStateChange() == ItemEvent.DESELECTED) {
-                //createAutoTable();
-            }
-        });
         isManualRadioButton.setSelected(true);
         final int[] verticalScrollBarMaximumValue = {scrollPane.getVerticalScrollBar().getMaximum()};
         scrollPane.getVerticalScrollBar().addAdjustmentListener(
@@ -319,7 +306,6 @@ public class MainUI {
         model2 = new DefaultTableModel();
         manualTable.setModel(model);
         autoTable.setModel(model2);
-        //model.addColumn("Auto");
     }
 
     public void updateReport(Report report) {

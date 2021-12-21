@@ -3,6 +3,7 @@ package com.sdimosik.smo;
 import com.sdimosik.smo.element.Appliances;
 import com.sdimosik.smo.element.Buffer;
 import com.sdimosik.smo.element.EndlessSource;
+import com.sdimosik.smo.element.Report;
 import com.sdimosik.smo.element.Task;
 import com.sdimosik.smo.ui.MainUI;
 
@@ -10,9 +11,6 @@ import static com.sdimosik.smo.Utils.State;
 
 public class App {
 
-    // 0 - step
-    // 1 - report
-    // 2 - ultimate
     private final MainUI mainUI;
 
     private final int MODE;
@@ -25,13 +23,10 @@ public class App {
     private final double MEAN;
     private final double VARIANCE;
 
-    //private static final Scanner IN = new Scanner(System.in);
-
     private EndlessSource input;
     private Buffer buffer;
     private Appliances appliances;
     public double currentTime;
-    //public InfoForUI infoForUI;
 
     public App(int mode,
                long barrier_task_count,
@@ -74,7 +69,6 @@ public class App {
         buffer = new Buffer(BUFFER_CAPACITY);
         appliances = new Appliances(input, APPLIANCES_CAPACITY);
         currentTime = 0.0;
-        //infoForUI = new InfoForUI(INPUT_COUNT, BUFFER_CAPACITY, APPLIANCES_CAPACITY);
     }
 
     public void prepare() {
@@ -116,9 +110,6 @@ public class App {
             appliances.offer(afterBufferTask);
             updateData(afterBufferTask, State.APPLIANCE, currentTime);
             double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
-            if (delta < 0){
-                int a =5;
-            }
             input.generators
                 .get(afterBufferTask.numSource)
                 .addBufferTime(delta);
@@ -141,9 +132,6 @@ public class App {
                 appliances.offer(afterBufferTask);
                 updateData(afterBufferTask, State.APPLIANCE, currentTime);
                 double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
-                if (delta < 0){
-                    int a =5;
-                }
                 input.generators
                     .get(afterBufferTask.numSource)
                     .addBufferTime(delta);
@@ -183,9 +171,6 @@ public class App {
                 appliances.offer(afterBufferTask);
                 updateData(afterBufferTask, State.APPLIANCE, currentTime);
                 double delta = afterBufferTask.getStartAppliancesTime() - afterBufferTask.startTime;
-                if (delta < 0){
-                    int a =5;
-                }
                 input.generators
                     .get(afterBufferTask.numSource)
                     .addBufferTime(delta);
